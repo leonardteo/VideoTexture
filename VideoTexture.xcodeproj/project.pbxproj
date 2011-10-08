@@ -1,0 +1,201 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8AE63D1C1440D0F600AE0D91 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AE63D1B1440D0F600AE0D91 /* main.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8AE63D151440D0F600AE0D91 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		8AE63D171440D0F600AE0D91 /* VideoTexture */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VideoTexture; sourceTree = BUILT_PRODUCTS_DIR; };
+		8AE63D1B1440D0F600AE0D91 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		8AE63D1D1440D0F600AE0D91 /* VideoTexture.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = VideoTexture.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8AE63D141440D0F600AE0D91 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		8AE63D0C1440D0F600AE0D91 = {
+			isa = PBXGroup;
+			children = (
+				8AE63D1A1440D0F600AE0D91 /* VideoTexture */,
+				8AE63D181440D0F600AE0D91 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8AE63D181440D0F600AE0D91 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8AE63D171440D0F600AE0D91 /* VideoTexture */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8AE63D1A1440D0F600AE0D91 /* VideoTexture */ = {
+			isa = PBXGroup;
+			children = (
+				8AE63D1B1440D0F600AE0D91 /* main.cpp */,
+				8AE63D1D1440D0F600AE0D91 /* VideoTexture.1 */,
+			);
+			path = VideoTexture;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8AE63D161440D0F600AE0D91 /* VideoTexture */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8AE63D201440D0F600AE0D91 /* Build configuration list for PBXNativeTarget "VideoTexture" */;
+			buildPhases = (
+				8AE63D131440D0F600AE0D91 /* Sources */,
+				8AE63D141440D0F600AE0D91 /* Frameworks */,
+				8AE63D151440D0F600AE0D91 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VideoTexture;
+			productName = VideoTexture;
+			productReference = 8AE63D171440D0F600AE0D91 /* VideoTexture */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8AE63D0E1440D0F600AE0D91 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "Leonard Teo";
+			};
+			buildConfigurationList = 8AE63D111440D0F600AE0D91 /* Build configuration list for PBXProject "VideoTexture" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 8AE63D0C1440D0F600AE0D91;
+			productRefGroup = 8AE63D181440D0F600AE0D91 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8AE63D161440D0F600AE0D91 /* VideoTexture */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8AE63D131440D0F600AE0D91 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8AE63D1C1440D0F600AE0D91 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8AE63D1E1440D0F600AE0D91 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		8AE63D1F1440D0F600AE0D91 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		8AE63D211440D0F600AE0D91 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		8AE63D221440D0F600AE0D91 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8AE63D111440D0F600AE0D91 /* Build configuration list for PBXProject "VideoTexture" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8AE63D1E1440D0F600AE0D91 /* Debug */,
+				8AE63D1F1440D0F600AE0D91 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8AE63D201440D0F600AE0D91 /* Build configuration list for PBXNativeTarget "VideoTexture" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8AE63D211440D0F600AE0D91 /* Debug */,
+				8AE63D221440D0F600AE0D91 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 8AE63D0E1440D0F600AE0D91 /* Project object */;
+}
