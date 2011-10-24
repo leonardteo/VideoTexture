@@ -63,15 +63,13 @@ public:
         
 	}
     
-	int compare(const cv::Mat& image) {
+	double compare(const cv::Mat& image) {
         
 		input= hist.colorReduce(image,div);
 		inputH= hist.getHistogram(input);
         
         //Get the number of similar pixels
-		int similarPixels = (int) cv::compareHist(refH,inputH,CV_COMP_INTERSECT);
-        
-        return abs(totalPixels - similarPixels);
+        return cv::compareHist(refH,inputH,CV_COMP_CHISQR);
         
 	}
 };

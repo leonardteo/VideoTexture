@@ -36,10 +36,14 @@ int main (int argc, const char * argv[])
     
     try {
         //Create the new video texture
-        videoTexture = new VideoTexture(filename, 32.0f);   
+        videoTexture = new VideoTexture(filename, 0.5f);   
         
         //Load the cache file
         videoTexture->loadFrameDiffMatrix(cachefile);
+        //videoTexture->showDistanceGraph();
+        
+        //Generate the cache file
+        //videoTexture->generateFrameDistanceMatrix(cachefile);
 
         //Debug the matrix
         //videoTexture->printFrameDifferenceMatrix();
@@ -48,6 +52,7 @@ int main (int argc, const char * argv[])
         //videoTexture->printProbabilityMatrix();
         
         videoTexture->showProbabilityGraph();
+        
         
     } catch (string e) {
         cout << e << endl;

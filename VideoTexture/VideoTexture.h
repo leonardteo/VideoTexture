@@ -38,14 +38,18 @@ private:
     int width;
     int height;
     
-    //Frame difference matrix
-    double **frameDifferenceMatrix;
+    //Frame distance matrix
+    double **frameDistanceMatrix;
     
     //Frame probability matrix
     double **frameProbabilityMatrix;
     
     //Sigma - magic number that controls probabilities
     double sigma;
+    
+    //Weighted frame distance matric and probability matrices for preserving dynamics
+    double **weightedFrameDistanceMatrix;
+    double **weightedFrameProbabilityMatrix;
     
 public:
     
@@ -56,7 +60,7 @@ public:
     void loadVideo(string file);
     
     //Generates the frameDiffMatrix and writes to a cache file
-    void generateFrameDifferenceMatrix(string file);
+    void generateFrameDistanceMatrix(string file);
     
     //Loads the frameDiffMatrix to a file
     void loadFrameDiffMatrix(string file);
@@ -64,8 +68,8 @@ public:
     //Play the video
     void playVideo();
     
-    //Calculate the sum squared difference between two frames
-    double getDifferenceBetweenFrames(const cv::Mat& image1, const cv::Mat& image2);
+    //Calculate the sum squared distance between two frames
+    double getDistanceBetweenFrames(const cv::Mat& image1, const cv::Mat& image2);
     
     //Generates greyscale frames for analysis
     void generateGreyscaleFrames();
@@ -76,8 +80,8 @@ public:
     //Debug an individual frame
     void debugFrame(int frame);
     
-    //Print the frame difference matrix
-    void printFrameDifferenceMatrix();
+    //Print the frame distance matrix
+    void printFrameDistanceMatrix();
     
     //Generate the frameProbabilityMatrix
     void generateProbabilityMatrix();
@@ -88,8 +92,14 @@ public:
     //Show probability graph
     void showProbabilityGraph(int scale = 10);
     
+    //Show the distance graph
+    void showDistanceGraph(int scale = 10);
+    
     //Get average distance (for calculating sigma)
     double getAverageDistance();
+    
+    //Preserve dynamics by applying weighted kernel
+    void preserveDynamics();
     
 };
 

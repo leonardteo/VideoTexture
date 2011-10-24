@@ -150,7 +150,7 @@ void VideoTexture::playGreyscaleVideo()
  * Calculate the L2 distance between two frames
  * Requires both frames to have 1 channel
  */
-double VideoTexture::getDifferenceBetweenFrames(const cv::Mat& image1, const cv::Mat& image2)
+double VideoTexture::getDistanceBetweenFrames(const cv::Mat& image1, const cv::Mat& image2)
 {
     double sum = 0.0f;
     
@@ -166,7 +166,7 @@ double VideoTexture::getDifferenceBetweenFrames(const cv::Mat& image1, const cv:
             if (pixelValue1 != pixelValue2)
             {
                 double diff = ((double) pixelValue1/255.0f) - ( (double) pixelValue2/255.0f);
-                sum = sum + (diff*diff);    //Difference squared
+                sum = sum + (diff*diff);    //Distance squared
             }
         }
     }
@@ -196,21 +196,57 @@ void VideoTexture::generateGreyscaleFrames()
  * Generates the frame diff matrix and writes to a cache file
  * @param string file
  */
-void VideoTexture::generateFrameDifferenceMatrix(string file)
+void VideoTexture::generateFrameDistanceMatrix(string file)
 {
     //First convert all frames to greyscale
     this->generateGreyscaleFrames();
     
     //Initialize the arrays
-    this->frameDifferenceMatrix = new double*[this->frameCount];
+    this->frameDistanceMatrix = new double*[this->frameCount];
     for (int i=0; i<this->frameCount; i++)
     {
-        this->frameDifferenceMatrix[i] = new double[this->frameCount];
+        this->frameDistanceMatrix[i] = new double[this->frameCount];
         
         //Preset all values to 0
         for (int j=0; j<this->frameCount; j++)
         {
-            this->frameDifferenceMatrix[i][j] = 0.0f;
+            this->frameDistanceMatrix[i][j] = 0.0f;
+        }
+    }
+
+    //Calculate the distance between each frame
+    for (int row=0; row < this->frameCount; row++)
+    {
+        cout << "Calculating distances for frame: " << row << endl;
+        for (int col=0; col < this->frameCount; col++)
+        {
+            double diff = this->getDistanceBetweenFrames(this->greyscaleFrames[row], this->greyscaleFrames[col]);
+            this->frameDistanceMatrix[row][col] = diff;
+            //cout << "Distance between frames " << row << " and " << col << ": " << diff << endl;
+        }
+    }
+    
+    cout << "Normalizing frame distances..." << endl;
+    
+    //Normalize the distances between 0-1
+    for (int row=0; row < this->frameCount; row++)
+    {
+        
+        double max = 0.0f;
+        
+        //First get the max
+        for (int col=0; col < this->frameCount; col++)
+        {
+            if (this->frameDistanceMatrix[row][col] > max)
+            {
+                max = this->frameDistanceMatrix[row][col];
+            }
+        }
+        
+        for (int col=0; col < this->frameCount; col++)
+        { 
+            this->frameDistanceMatrix[row][col] /= max;
+            //cout << "Normalized distance between frames " << row << " and " << col << ": " << this->frameDistanceMatrix[row][col] << endl;
         }
     }
     
@@ -223,17 +259,15 @@ void VideoTexture::generateFrameDifferenceMatrix(string file)
         throw string("Could not open " + file);
     }
     
-    //Calculate the difference between each frame
+    //Write distances to file
     for (int row=0; row < this->frameCount; row++)
     {
+        
         for (int col=0; col < this->frameCount; col++)
-        {
-            double diff = this->getDifferenceBetweenFrames(this->greyscaleFrames[row], this->greyscaleFrames[col]);
-            this->frameDifferenceMatrix[row][col] = diff;
-            outfile << diff << endl;
-            cout << "Difference between frames " << row << " and " << col << ": " << diff << endl;
+        { 
+            outfile << this->frameDistanceMatrix[row][col] << endl;
         }
-    }
+    }    
     
     //Close the file handler
     outfile.close();
@@ -248,15 +282,15 @@ void VideoTexture::generateFrameDifferenceMatrix(string file)
 void VideoTexture::loadFrameDiffMatrix(string file)
 {
     //Initialize matrix
-    this->frameDifferenceMatrix = new double*[this->frameCount];
+    this->frameDistanceMatrix = new double*[this->frameCount];
     for (int i=0; i<this->frameCount; i++)
     {
-        this->frameDifferenceMatrix[i] = new double[this->frameCount];
+        this->frameDistanceMatrix[i] = new double[this->frameCount];
         
         //Preset all values to 0
         for (int j=0; j<this->frameCount; j++)
         {
-            this->frameDifferenceMatrix[i][j] = 0.0f;
+            this->frameDistanceMatrix[i][j] = 0.0f;
         }
     }    
     
@@ -277,7 +311,7 @@ void VideoTexture::loadFrameDiffMatrix(string file)
             if (infile.good())
             {
                 getline(infile, line);
-                this->frameDifferenceMatrix[row][col] = atof(line.c_str());
+                this->frameDistanceMatrix[row][col] = atof(line.c_str());
             }
         }
     }
@@ -326,15 +360,15 @@ void VideoTexture::debugFrame(int frameNum)
 }
 
 /**
- * Debug the frame difference matrix by printing all values to cout
+ * Debug the frame distance matrix by printing all values to cout
  */
-void VideoTexture::printFrameDifferenceMatrix()
+void VideoTexture::printFrameDistanceMatrix()
 {
     for (int row=0; row < this->frameCount; row++)
     {
         for (int col=0; col < this->frameCount; col++)
         {
-            cout << this->frameDifferenceMatrix[row][col] << " ";
+            cout << this->frameDistanceMatrix[row][col] << " ";
         }
         
         cout << endl;
@@ -366,7 +400,7 @@ void VideoTexture::generateProbabilityMatrix()
     {
         for (int col=0; col < this->frameCount; col++)
         {
-            this->frameProbabilityMatrix[row][col] = exp(-this->frameDifferenceMatrix[row+1][col]/this->sigma);
+            this->frameProbabilityMatrix[row][col] = exp(-this->frameDistanceMatrix[row+1][col]/this->sigma);
         }
     }
     
@@ -451,6 +485,63 @@ void VideoTexture::showProbabilityGraph(int scale)
 }
 
 
+/**
+ * Show the distance graph
+ */
+void VideoTexture::showDistanceGraph(int scale)
+{
+    //Create a new nxn image
+    int n = this->frameCount;  //Create a dimension
+    cv::Mat image(cv::Size(n, n), CV_8UC1);
+    
+    //Plot the distances
+    for (int y=0; y<n; y++)
+    {
+        //Get the maximum x value
+        double max = 0.0f;
+        for (int x=0; x<n; x++)
+        {
+            if (this->frameDistanceMatrix[x][y] > max)
+            {
+                max = this->frameDistanceMatrix[x][y];
+            }
+        }
+        
+        //Loop through again and get the lerp
+        for (int x=0; x<n; x++)
+        {
+            //Invert the color
+            double color = (this->frameDistanceMatrix[x][y]/max) - 0.5f;
+            if (color < 0.0f)
+            {
+                color += 1.0f;
+            }
+            color *= 255.0f;    //Make it in terms of 0-255
+            image.at<uchar>(y, x) = (uchar)color;
+        }
+    }
+    
+    cv::Mat displayImage;
+    cv::resize(image, displayImage, cv::Size(n*scale, n*scale));
+    
+    //Display the image
+    bool stop = false;
+    
+    while (!stop)
+    {
+        //Display the current frame
+        cv::imshow("Frame Distance Matrix", displayImage);
+        
+        //Wait for key or delay
+        if (cv::waitKey())
+        {
+            stop = true;
+        }
+    }
+    
+}
+
+
 
 /**
  * Get average Distance
@@ -462,8 +553,32 @@ double VideoTexture::getAverageDistance()
     {
         for (int col=0; col<this->frameCount; col++)
         {
-            sum += this->frameDifferenceMatrix[row][col];
+            sum += this->frameDistanceMatrix[row][col];
         }
     }
     return sum / (this->frameCount * this->frameCount);
 }
+
+
+/**
+ * Preserve dynamics by applying a weighted kernel
+ */
+void VideoTexture::preserveDynamics()
+{
+    //Initialize distance matrix
+    this->weightedFrameDistanceMatrix = new double*[this->frameCount];
+    for (int i=0; i<this->frameCount; i++)
+    {
+        this->weightedFrameDistanceMatrix[i] = new double[this->frameCount];
+        
+        //Preset all values to 0
+        for (int j=0; j<this->frameCount; j++)
+        {
+            this->weightedFrameDistanceMatrix[i][j] = 0.0f;
+        }
+    }
+    
+}
+
+
+
