@@ -22,14 +22,11 @@ using namespace std;
  */
 class VideoTexture {
     
-private:
+public:
     
     //Frames
     cv::Mat *frames;
     cv::Mat *greyscaleFrames; //Greyscale versions of the same frames for analysis
-    
-    //FrameCount
-    int frameCount;
     
     //Framerate
     double frameRate;
@@ -47,11 +44,18 @@ private:
     //Sigma - magic number that controls probabilities
     double sigma;
     
-    //Weighted frame distance matric and probability matrices for preserving dynamics
+    //Weighted frame distance matrix and probability matrices for preserving dynamics
     double **weightedFrameDistanceMatrix;
     double **weightedFrameProbabilityMatrix;
     
-public:
+    //Anticipated future cost matrix
+    double **anticipatedFutureCostMatrix;
+    double **anticipatedFutureCostProbabilityMatrix;
+    
+
+    
+    //FrameCount
+    int frameCount;    
     
     //Constructor
     VideoTexture(string file, double sigma);
@@ -80,26 +84,32 @@ public:
     //Debug an individual frame
     void debugFrame(int frame);
     
-    //Print the frame distance matrix
-    void printFrameDistanceMatrix();
-    
     //Generate the frameProbabilityMatrix
     void generateProbabilityMatrix();
     
-    //Print the frame probability matrix
-    void printProbabilityMatrix();
-    
-    //Show probability graph
-    void showProbabilityGraph(int scale = 10);
-    
-    //Show the distance graph
-    void showDistanceGraph(int scale = 10);
-    
     //Get average distance (for calculating sigma)
     double getAverageDistance();
+        
+    //Generate the weighted distance matrix
+    void generateWeightedFrameDistanceMatrix();
     
-    //Preserve dynamics by applying weighted kernel
-    void preserveDynamics();
+    //Generate the weighted probability matrix
+    void generateWeightedProbabilityMatrix();
+    
+    //Avoid dead ends
+    void generateAnticipateFutureCostMatrix(double p = 1, double alpha = 0.995, int passes = 1);
+    
+    //Generic function for showing a matrix
+    void printMatrix(double** matrix, int size);
+    
+    //Generic function for displaying a matrix graphically
+    void showMatrix(string name, double** matrix, int size, bool invert = false, int scale = 10);
+    
+    //Stochastically get next frame based on probability
+    int getNextFrameStochastically(int currentFrame, double** matrix);
+    
+    //Playback
+    void randomPlay(double** matrix);
     
 };
 
