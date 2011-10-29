@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A8FF7ED1457541C00C94031 /* VideoTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AEC499B14545D8D006CC522 /* VideoTexture.cpp */; };
 		8AE63D1C1440D0F600AE0D91 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AE63D1B1440D0F600AE0D91 /* main.cpp */; };
 		8AE63D291440D1FC00AE0D91 /* libopencv_calib3d.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AE63D231440D1FC00AE0D91 /* libopencv_calib3d.2.2.0.dylib */; };
 		8AE63D2A1440D1FC00AE0D91 /* libopencv_core.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AE63D241440D1FC00AE0D91 /* libopencv_core.2.2.0.dylib */; };
@@ -15,10 +16,39 @@
 		8AE63D2D1440D1FC00AE0D91 /* libopencv_imgproc.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AE63D271440D1FC00AE0D91 /* libopencv_imgproc.2.2.0.dylib */; };
 		8AE63D2E1440D1FC00AE0D91 /* libopencv_video.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AE63D281440D1FC00AE0D91 /* libopencv_video.2.2.0.dylib */; };
 		8AEC499D14545D8D006CC522 /* VideoTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AEC499B14545D8D006CC522 /* VideoTexture.cpp */; };
+		8AF67FC3145754D80098EAA1 /* libopencv_core.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF67FBF145754D80098EAA1 /* libopencv_core.2.2.0.dylib */; };
+		8AF67FC4145754D80098EAA1 /* libopencv_highgui.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF67FC0145754D80098EAA1 /* libopencv_highgui.2.2.0.dylib */; };
+		8AF67FC5145754D80098EAA1 /* libopencv_imgproc.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF67FC1145754D80098EAA1 /* libopencv_imgproc.2.2.0.dylib */; };
+		8AF67FC6145754D80098EAA1 /* libopencv_video.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF67FC2145754D80098EAA1 /* libopencv_video.2.2.0.dylib */; };
+		8AF67FC8145755730098EAA1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A8FF7E2145752E700C94031 /* main.cpp */; };
+		8AF67FD114578A9E0098EAA1 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AF67FD014578A9E0098EAA1 /* main.cpp */; };
+		8AF67FD614578AB20098EAA1 /* VideoTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AEC499B14545D8D006CC522 /* VideoTexture.cpp */; };
+		8AF67FDB14578ACD0098EAA1 /* libopencv_core.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF67FD714578ACD0098EAA1 /* libopencv_core.2.2.0.dylib */; };
+		8AF67FDC14578ACD0098EAA1 /* libopencv_highgui.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF67FD814578ACD0098EAA1 /* libopencv_highgui.2.2.0.dylib */; };
+		8AF67FDD14578ACD0098EAA1 /* libopencv_imgproc.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF67FD914578ACD0098EAA1 /* libopencv_imgproc.2.2.0.dylib */; };
+		8AF67FDE14578ACD0098EAA1 /* libopencv_video.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AF67FDA14578ACD0098EAA1 /* libopencv_video.2.2.0.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		8A8FF7DD145752E700C94031 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		8AE63D151440D0F600AE0D91 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		8AF67FCB14578A9E0098EAA1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -30,6 +60,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8A8FF7DF145752E700C94031 /* VideoTextureCacheGen */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VideoTextureCacheGen; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A8FF7E2145752E700C94031 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		8A8FF7E4145752E700C94031 /* VideoTextureCacheGen.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = VideoTextureCacheGen.1; sourceTree = "<group>"; };
 		8AE63D171440D0F600AE0D91 /* VideoTexture */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VideoTexture; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AE63D1B1440D0F600AE0D91 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		8AE63D1D1440D0F600AE0D91 /* VideoTexture.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = VideoTexture.1; sourceTree = "<group>"; };
@@ -99,9 +132,31 @@
 		8AF0B559144E3BD10081320C /* Histogram1D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Histogram1D.h; sourceTree = "<group>"; };
 		8AF0B55A144E3DE70081320C /* colorhistogram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = colorhistogram.h; sourceTree = "<group>"; };
 		8AF0B55B144E3E290081320C /* ImageComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageComparator.h; sourceTree = "<group>"; };
+		8AF67FBF145754D80098EAA1 /* libopencv_core.2.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.2.0.dylib; path = ../../../../../opt/local/lib/libopencv_core.2.2.0.dylib; sourceTree = "<group>"; };
+		8AF67FC0145754D80098EAA1 /* libopencv_highgui.2.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.2.2.0.dylib; path = ../../../../../opt/local/lib/libopencv_highgui.2.2.0.dylib; sourceTree = "<group>"; };
+		8AF67FC1145754D80098EAA1 /* libopencv_imgproc.2.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.2.2.0.dylib; path = ../../../../../opt/local/lib/libopencv_imgproc.2.2.0.dylib; sourceTree = "<group>"; };
+		8AF67FC2145754D80098EAA1 /* libopencv_video.2.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_video.2.2.0.dylib; path = ../../../../../opt/local/lib/libopencv_video.2.2.0.dylib; sourceTree = "<group>"; };
+		8AF67FCD14578A9E0098EAA1 /* VideoTexturePlayground */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VideoTexturePlayground; sourceTree = BUILT_PRODUCTS_DIR; };
+		8AF67FD014578A9E0098EAA1 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		8AF67FD214578A9E0098EAA1 /* VideoTexturePlayground.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = VideoTexturePlayground.1; sourceTree = "<group>"; };
+		8AF67FD714578ACD0098EAA1 /* libopencv_core.2.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.2.0.dylib; path = ../../../../../opt/local/lib/libopencv_core.2.2.0.dylib; sourceTree = "<group>"; };
+		8AF67FD814578ACD0098EAA1 /* libopencv_highgui.2.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.2.2.0.dylib; path = ../../../../../opt/local/lib/libopencv_highgui.2.2.0.dylib; sourceTree = "<group>"; };
+		8AF67FD914578ACD0098EAA1 /* libopencv_imgproc.2.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.2.2.0.dylib; path = ../../../../../opt/local/lib/libopencv_imgproc.2.2.0.dylib; sourceTree = "<group>"; };
+		8AF67FDA14578ACD0098EAA1 /* libopencv_video.2.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_video.2.2.0.dylib; path = ../../../../../opt/local/lib/libopencv_video.2.2.0.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8A8FF7DC145752E700C94031 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8AF67FC3145754D80098EAA1 /* libopencv_core.2.2.0.dylib in Frameworks */,
+				8AF67FC4145754D80098EAA1 /* libopencv_highgui.2.2.0.dylib in Frameworks */,
+				8AF67FC5145754D80098EAA1 /* libopencv_imgproc.2.2.0.dylib in Frameworks */,
+				8AF67FC6145754D80098EAA1 /* libopencv_video.2.2.0.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8AE63D141440D0F600AE0D91 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,12 +170,40 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8AF67FCA14578A9E0098EAA1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8AF67FDB14578ACD0098EAA1 /* libopencv_core.2.2.0.dylib in Frameworks */,
+				8AF67FDC14578ACD0098EAA1 /* libopencv_highgui.2.2.0.dylib in Frameworks */,
+				8AF67FDD14578ACD0098EAA1 /* libopencv_imgproc.2.2.0.dylib in Frameworks */,
+				8AF67FDE14578ACD0098EAA1 /* libopencv_video.2.2.0.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8A8FF7E1145752E700C94031 /* VideoTextureCacheGen */ = {
+			isa = PBXGroup;
+			children = (
+				8A8FF7E2145752E700C94031 /* main.cpp */,
+				8A8FF7E4145752E700C94031 /* VideoTextureCacheGen.1 */,
+			);
+			path = VideoTextureCacheGen;
+			sourceTree = "<group>";
+		};
 		8AE63D0C1440D0F600AE0D91 = {
 			isa = PBXGroup;
 			children = (
+				8AF67FD714578ACD0098EAA1 /* libopencv_core.2.2.0.dylib */,
+				8AF67FD814578ACD0098EAA1 /* libopencv_highgui.2.2.0.dylib */,
+				8AF67FD914578ACD0098EAA1 /* libopencv_imgproc.2.2.0.dylib */,
+				8AF67FDA14578ACD0098EAA1 /* libopencv_video.2.2.0.dylib */,
+				8AF67FBF145754D80098EAA1 /* libopencv_core.2.2.0.dylib */,
+				8AF67FC0145754D80098EAA1 /* libopencv_highgui.2.2.0.dylib */,
+				8AF67FC1145754D80098EAA1 /* libopencv_imgproc.2.2.0.dylib */,
+				8AF67FC2145754D80098EAA1 /* libopencv_video.2.2.0.dylib */,
 				8AE63D231440D1FC00AE0D91 /* libopencv_calib3d.2.2.0.dylib */,
 				8AE63D241440D1FC00AE0D91 /* libopencv_core.2.2.0.dylib */,
 				8AE63D251440D1FC00AE0D91 /* libopencv_features2d.2.2.0.dylib */,
@@ -128,6 +211,8 @@
 				8AE63D271440D1FC00AE0D91 /* libopencv_imgproc.2.2.0.dylib */,
 				8AE63D281440D1FC00AE0D91 /* libopencv_video.2.2.0.dylib */,
 				8AE63D1A1440D0F600AE0D91 /* VideoTexture */,
+				8A8FF7E1145752E700C94031 /* VideoTextureCacheGen */,
+				8AF67FCF14578A9E0098EAA1 /* VideoTexturePlayground */,
 				8AE63D181440D0F600AE0D91 /* Products */,
 				8AE63D2F1440D21400AE0D91 /* opencv2 */,
 			);
@@ -137,6 +222,8 @@
 			isa = PBXGroup;
 			children = (
 				8AE63D171440D0F600AE0D91 /* VideoTexture */,
+				8A8FF7DF145752E700C94031 /* VideoTextureCacheGen */,
+				8AF67FCD14578A9E0098EAA1 /* VideoTexturePlayground */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -314,9 +401,35 @@
 			path = video;
 			sourceTree = "<group>";
 		};
+		8AF67FCF14578A9E0098EAA1 /* VideoTexturePlayground */ = {
+			isa = PBXGroup;
+			children = (
+				8AF67FD014578A9E0098EAA1 /* main.cpp */,
+				8AF67FD214578A9E0098EAA1 /* VideoTexturePlayground.1 */,
+			);
+			path = VideoTexturePlayground;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		8A8FF7DE145752E700C94031 /* VideoTextureCacheGen */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8A8FF7E7145752E700C94031 /* Build configuration list for PBXNativeTarget "VideoTextureCacheGen" */;
+			buildPhases = (
+				8A8FF7DB145752E700C94031 /* Sources */,
+				8A8FF7DC145752E700C94031 /* Frameworks */,
+				8A8FF7DD145752E700C94031 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VideoTextureCacheGen;
+			productName = VideoTextureCacheGen;
+			productReference = 8A8FF7DF145752E700C94031 /* VideoTextureCacheGen */;
+			productType = "com.apple.product-type.tool";
+		};
 		8AE63D161440D0F600AE0D91 /* VideoTexture */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8AE63D201440D0F600AE0D91 /* Build configuration list for PBXNativeTarget "VideoTexture" */;
@@ -332,6 +445,23 @@
 			name = VideoTexture;
 			productName = VideoTexture;
 			productReference = 8AE63D171440D0F600AE0D91 /* VideoTexture */;
+			productType = "com.apple.product-type.tool";
+		};
+		8AF67FCC14578A9E0098EAA1 /* VideoTexturePlayground */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8AF67FD314578A9E0098EAA1 /* Build configuration list for PBXNativeTarget "VideoTexturePlayground" */;
+			buildPhases = (
+				8AF67FC914578A9E0098EAA1 /* Sources */,
+				8AF67FCA14578A9E0098EAA1 /* Frameworks */,
+				8AF67FCB14578A9E0098EAA1 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VideoTexturePlayground;
+			productName = VideoTexturePlayground;
+			productReference = 8AF67FCD14578A9E0098EAA1 /* VideoTexturePlayground */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -355,11 +485,22 @@
 			projectRoot = "";
 			targets = (
 				8AE63D161440D0F600AE0D91 /* VideoTexture */,
+				8A8FF7DE145752E700C94031 /* VideoTextureCacheGen */,
+				8AF67FCC14578A9E0098EAA1 /* VideoTexturePlayground */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8A8FF7DB145752E700C94031 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A8FF7ED1457541C00C94031 /* VideoTexture.cpp in Sources */,
+				8AF67FC8145755730098EAA1 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8AE63D131440D0F600AE0D91 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -369,9 +510,48 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8AF67FC914578A9E0098EAA1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8AF67FD114578A9E0098EAA1 /* main.cpp in Sources */,
+				8AF67FD614578AB20098EAA1 /* VideoTexture.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		8A8FF7E5145752E700C94031 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		8A8FF7E6145752E700C94031 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		8AE63D1E1440D0F600AE0D91 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -403,6 +583,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "/opt/local/include/**";
 			};
@@ -440,9 +621,48 @@
 			};
 			name = Release;
 		};
+		8AF67FD414578A9E0098EAA1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		8AF67FD514578A9E0098EAA1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/local/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8A8FF7E7145752E700C94031 /* Build configuration list for PBXNativeTarget "VideoTextureCacheGen" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8A8FF7E5145752E700C94031 /* Debug */,
+				8A8FF7E6145752E700C94031 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		8AE63D111440D0F600AE0D91 /* Build configuration list for PBXProject "VideoTexture" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -460,6 +680,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		8AF67FD314578A9E0098EAA1 /* Build configuration list for PBXNativeTarget "VideoTexturePlayground" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8AF67FD414578A9E0098EAA1 /* Debug */,
+				8AF67FD514578A9E0098EAA1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

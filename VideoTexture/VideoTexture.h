@@ -97,7 +97,7 @@ public:
     void generateWeightedProbabilityMatrix();
     
     //Avoid dead ends
-    void generateAnticipateFutureCostMatrix(double p = 1, double alpha = 0.995, int passes = 1);
+    void generateAnticipatedFutureCostMatrix(double p = 1, double alpha = 0.995, double convergenceThreshold = 0.001f);
     
     //Generic function for showing a matrix
     void printMatrix(double** matrix, int size);
@@ -109,7 +109,26 @@ public:
     int getNextFrameStochastically(int currentFrame, double** matrix);
     
     //Playback
-    void randomPlay(double** matrix);
+    void randomPlay(double** matrix, double pruneThreshold, bool crossFade = true);
+    
+    //Lerp
+    uchar lerp(uchar from, uchar to, float amount);
+    
+    //Cross fade the frame
+    cv::Mat createCrossFadeFrame(cv::Mat& from, cv::Mat& to);
+    
+    //Generalized method for initializing a matrix
+    double** initMatrix(int size);
+    
+    //Generalized method for normalizing a matrix
+    void normalizeMatrixRows(double** matrix);
+    void normalizeMatrix(double** matrix);
+    
+    //Check frame
+    int checkFrame(double** matrix, int frame);
+    
+    //Prune transitions
+    void pruneTransitions(double** matrix, double threshold);
     
 };
 

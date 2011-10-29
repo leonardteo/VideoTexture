@@ -206,17 +206,7 @@ void VideoTexture::generateFrameDistanceMatrix(string file)
     this->generateGreyscaleFrames();
     
     //Initialize the arrays
-    this->frameDistanceMatrix = new double*[this->frameCount];
-    for (int i=0; i<this->frameCount; i++)
-    {
-        this->frameDistanceMatrix[i] = new double[this->frameCount];
-        
-        //Preset all values to 0
-        for (int j=0; j<this->frameCount; j++)
-        {
-            this->frameDistanceMatrix[i][j] = 0.0f;
-        }
-    }
+    this->frameDistanceMatrix = this->initMatrix(this->frameCount);
 
     //Calculate the distance between each frame
     for (int row=0; row < this->frameCount; row++)
@@ -230,29 +220,10 @@ void VideoTexture::generateFrameDistanceMatrix(string file)
         }
     }
     
-    cout << "Normalizing frame distances..." << endl;
+    //cout << "Normalizing frame distances..." << endl;
     
     //Normalize the distances between 0-1
-    for (int row=0; row < this->frameCount; row++)
-    {
-        
-        double max = 0.0f;
-        
-        //First get the max
-        for (int col=0; col < this->frameCount; col++)
-        {
-            if (this->frameDistanceMatrix[row][col] > max)
-            {
-                max = this->frameDistanceMatrix[row][col];
-            }
-        }
-        
-        for (int col=0; col < this->frameCount; col++)
-        { 
-            this->frameDistanceMatrix[row][col] /= max;
-            //cout << "Normalized distance between frames " << row << " and " << col << ": " << this->frameDistanceMatrix[row][col] << endl;
-        }
-    }
+    //this->normalizeMatrix(this->frameDistanceMatrix);
      
     
     //Open the file handler to write
@@ -289,17 +260,7 @@ void VideoTexture::generateFrameDistanceMatrix(string file)
 void VideoTexture::loadFrameDiffMatrix(string file)
 {
     //Initialize matrix
-    this->frameDistanceMatrix = new double*[this->frameCount];
-    for (int i=0; i<this->frameCount; i++)
-    {
-        this->frameDistanceMatrix[i] = new double[this->frameCount];
-        
-        //Preset all values to 0
-        for (int j=0; j<this->frameCount; j++)
-        {
-            this->frameDistanceMatrix[i][j] = 0.0f;
-        }
-    }    
+    this->frameDistanceMatrix = this->initMatrix(this->frameCount);
     
     //open the file
     fstream infile;
@@ -322,6 +283,9 @@ void VideoTexture::loadFrameDiffMatrix(string file)
             }
         }
     }
+    
+    //Rescale matrix so that its maxima is 1
+    this->normalizeMatrix(this->frameDistanceMatrix);
 }
 
 
@@ -372,17 +336,7 @@ void VideoTexture::debugFrame(int frameNum)
 void VideoTexture::generateProbabilityMatrix()
 {
     //Initialize probability matrix
-    this->frameProbabilityMatrix = new double*[this->frameCount];
-    for (int i=0; i<this->frameCount; i++)
-    {
-        this->frameProbabilityMatrix[i] = new double[this->frameCount];
-        
-        //Preset all values to 0
-        for (int j=0; j<this->frameCount; j++)
-        {
-            this->frameProbabilityMatrix[i][j] = 0.0f;
-        }
-    }    
+    this->frameProbabilityMatrix = this->initMatrix(this->frameCount);
     
     //Calculate the probability for each frame
     //probability[i,j] = exp(-D[i+1, j]/sigma
@@ -395,24 +349,8 @@ void VideoTexture::generateProbabilityMatrix()
     }
     
     //Normalize the matrix so that each row adds up to 1
-    for (int row=0; row < this->frameCount - 1; row++)
-    {
-        double sum = 0.0f;
-        
-        //First loop calculates the sum
-        for (int col=0; col < this->frameCount; col++)
-        {
-            sum += this->frameProbabilityMatrix[row][col];
-        }
-        
-        //Second loop normalizes each value
-        for (int col=0; col < this->frameCount; col++)
-        {
-            this->frameProbabilityMatrix[row][col] /= sum;
-        }
-        
-    }
-    
+    this->normalizeMatrixRows(this->frameProbabilityMatrix);
+
 }
 
 /**
@@ -438,17 +376,15 @@ double VideoTexture::getAverageDistance()
 void VideoTexture::generateWeightedFrameDistanceMatrix()
 {
     //Initialize the weighted matrix
-    this->weightedFrameDistanceMatrix = new double*[this->frameCount];
+    this->weightedFrameDistanceMatrix = this->initMatrix(this->frameCount);
     for (int i=0; i<this->frameCount; i++)
     {
-        this->weightedFrameDistanceMatrix[i] = new double[this->frameCount];
-        
         //Preset all values to values from the non weighted version
         for (int j=0; j<this->frameCount; j++)
         {
             this->weightedFrameDistanceMatrix[i][j] = this->frameDistanceMatrix[i][j];
         }
-    }        
+    }
     
     
     //Algorithm from Schodl et al
@@ -475,25 +411,7 @@ void VideoTexture::generateWeightedFrameDistanceMatrix()
     }
     
     //Normalize the distances between 0-1
-    for (int row=0; row < this->frameCount; row++)
-    {
-        
-        double max = 0.0f;
-        
-        //First get the max
-        for (int col=0; col < this->frameCount; col++)
-        {
-            if (this->weightedFrameDistanceMatrix[row][col] > max)
-            {
-                max = this->weightedFrameDistanceMatrix[row][col];
-            }
-        }
-        
-        for (int col=0; col < this->frameCount; col++)
-        { 
-            this->weightedFrameDistanceMatrix[row][col] /= max;
-        }
-    }
+    this->normalizeMatrix(this->weightedFrameDistanceMatrix);
     
 }
 
@@ -503,17 +421,7 @@ void VideoTexture::generateWeightedFrameDistanceMatrix()
 void VideoTexture::generateWeightedProbabilityMatrix()
 {
     //Initialize probability matrix
-    this->weightedFrameProbabilityMatrix = new double*[this->frameCount];
-    for (int i=0; i<this->frameCount; i++)
-    {
-        this->weightedFrameProbabilityMatrix[i] = new double[this->frameCount];
-        
-        //Preset all values to 0
-        for (int j=0; j<this->frameCount; j++)
-        {
-            this->weightedFrameProbabilityMatrix[i][j] = 0.0f;
-        }
-    }    
+    this->weightedFrameProbabilityMatrix = this->initMatrix(this->frameCount);
     
     //Calculate the probability for each frame
     //probability[i,j] = exp(-D[i+1, j]/sigma
@@ -526,25 +434,8 @@ void VideoTexture::generateWeightedProbabilityMatrix()
         }
     }
     
-    
     //Normalize the matrix so that each row adds up to 1
-    for (int row=0; row < this->frameCount - 1; row++)
-    {
-        double sum = 0.0f;
-        
-        //First loop calculates the sum
-        for (int col=0; col < this->frameCount; col++)
-        {
-            sum += this->weightedFrameProbabilityMatrix[row][col];
-        }
-        
-        //Second loop normalizes each value
-        for (int col=0; col < this->frameCount; col++)
-        {
-            this->weightedFrameProbabilityMatrix[row][col] /= sum;
-        }
-        
-    }    
+    this->normalizeMatrixRows(this->weightedFrameProbabilityMatrix);
     
 }
 
@@ -555,44 +446,64 @@ void VideoTexture::generateWeightedProbabilityMatrix()
  * @param double alpha
  * @param int passes Number of times you want this to run
  */
-void VideoTexture::generateAnticipateFutureCostMatrix(double p, double alpha, int passes)
+void VideoTexture::generateAnticipatedFutureCostMatrix(double p, double alpha, double convergenceThreshold)
 {
     //First, initialize the new anticipated future cost matrix of D'' 
-    this->anticipatedFutureCostMatrix = new double*[this->frameCount];
+    this->anticipatedFutureCostMatrix = this->initMatrix(this->frameCount);
     for (int i=0; i<this->frameCount; i++)
-    {
-        this->anticipatedFutureCostMatrix[i] = new double[this->frameCount];
-        
+    {       
         //Initialize default values of D''ij as D'ij^p  (D'ij is the weighted distance matrix)
         for (int j=0; j<this->frameCount; j++)
         {
             this->anticipatedFutureCostMatrix[i][j] = pow(this->weightedFrameDistanceMatrix[i][j], p);
         }
     } 
-    
-    //Loop through passes
-    for (int pass=0; pass < passes; pass++)
+
+    //Initialize array m, which holds the minimum for each row
+    double m[this->frameCount];
+    for (int j=0; j<this->frameCount; j++)
     {
-        //Initialize array m, which holds the minimum for each row
-        double *m = new double[this->frameCount];
-        
-        cout << "Pass: " << pass << endl;
+        //m[j] = this->anticipatedFutureCostMatrix[j][0]; //Initialize m[j] to D''j_0
+        m[j] = 10000.0f;    //Really high number so it will change on second pass
+    }
+    
+    bool converged = false;
+    int passCount = 0;
+    
+    while (!converged)
+    {
+        passCount++;
+        cout << "Pass: " << passCount << endl;
         
         //Step 1 - Find the minimum distance for each row  min_k D''jk
         for (int j = 0; j < this->frameCount; j++)
         {
-            //Find m[j], the cost of the best transition
-            m[j] = this->anticipatedFutureCostMatrix[j][0];   //Set to the first number
-            int index_min_k = 0;
+            //Set a new mj
+            double m_j = 10000.0f; //set to a really high number so that it WILL change
+            int index_min_k = -1;
+            
             for (int k=0; k<this->frameCount; k++)
             {
-                if (this->anticipatedFutureCostMatrix[j][k] < m[j] && j != k)
+                if (this->anticipatedFutureCostMatrix[j][k] < m_j && j != k)
                 {
-                    m[j] = this->anticipatedFutureCostMatrix[j][k];
+                    m_j = this->anticipatedFutureCostMatrix[j][k];
                     index_min_k = k;
                 }
             }
-            cout << "Value min_k(D''jk) min cost of transition from j= " << j << " is: " << m[j] << ", k= " << index_min_k << endl;;
+             
+            //cout << "Value min_k(D''jk) min cost of transition from j= " << j << " is: " << m_j << ", k= " << index_min_k << endl;;
+            
+            //Check what the difference is between the two
+            double diff = abs(m[j] - m_j);
+            
+            if (diff < convergenceThreshold)
+            {
+                //cout << "MATRIX CONVERGED!!! Difference: " << diff << " < " << convergenceThreshold << endl;;
+                converged = true;   
+            }
+            
+            m[j] = m_j;
+            
         }
         
         //Step 2 Calculate new D''ij
@@ -604,48 +515,19 @@ void VideoTexture::generateAnticipateFutureCostMatrix(double p, double alpha, in
                 
             }
         }
+        
+        //Normalize the distances between 0-1
+        this->normalizeMatrix(this->anticipatedFutureCostMatrix);
+        
     }
-    
-    //Normalize the distances between 0-1
-    for (int row=0; row < this->frameCount; row++)
-    {
-        
-        double max = 0.0f;
-        
-        //First get the max
-        for (int col=0; col < this->frameCount; col++)
-        {
-            if (this->anticipatedFutureCostMatrix[row][col] > max)
-            {
-                max = this->anticipatedFutureCostMatrix[row][col];
-            }
-        }
-        
-        for (int col=0; col < this->frameCount; col++)
-        { 
-            this->anticipatedFutureCostMatrix[row][col] /= max;
-        }
-    }
-
 
     
     //Calculate probability matrix based on anticipated future cost matrix
     //Initialize probability matrix
-    this->anticipatedFutureCostProbabilityMatrix = new double*[this->frameCount];
-    for (int i=0; i<this->frameCount; i++)
-    {
-        this->anticipatedFutureCostProbabilityMatrix[i] = new double[this->frameCount];
-        
-        //Preset all values to 0
-        for (int j=0; j<this->frameCount; j++)
-        {
-            this->anticipatedFutureCostProbabilityMatrix[i][j] = 0.0f;
-        }
-    }    
+    this->anticipatedFutureCostProbabilityMatrix = this->initMatrix(this->frameCount);
     
     //Calculate the probability for each frame
     //probability[i,j] = exp(-D[i+1, j]/sigma
-    
     for (int row=0; row < this->frameCount - 1; row++)
     {
         for (int col=0; col < this->frameCount; col++)
@@ -654,31 +536,49 @@ void VideoTexture::generateAnticipateFutureCostMatrix(double p, double alpha, in
         }
     }
     
-    //Normalize the distances between 0-1
-    for (int row=0; row < this->frameCount; row++)
-    {
-        
-        double max = 0.0f;
-        
-        //First get the max
-        for (int col=0; col < this->frameCount; col++)
-        {
-            if (this->anticipatedFutureCostProbabilityMatrix[row][col] > max)
-            {
-                max = this->anticipatedFutureCostProbabilityMatrix[row][col];
-            }
-        }
-        
-        for (int col=0; col < this->frameCount; col++)
-        { 
-            if (max > 0.0f)
-                this->anticipatedFutureCostProbabilityMatrix[row][col] /= max;
-            else
-                this->anticipatedFutureCostProbabilityMatrix[row][col] = 0.0f;
-        }
-    } 
+    //Normalize the probability matrix
+    //this->normalizeMatrixRows(this->anticipatedFutureCostProbabilityMatrix);
+   
 }
 
+
+/**
+ * Initialize a matrix
+ */
+double** VideoTexture::initMatrix(int size)
+{
+    double** matrix = new double*[size];
+    
+    for (int i=0; i<size; i++)
+    {
+        //Initialize rows
+        matrix[i] = new double[size];
+        
+        for (int j=0; j<size; j++)
+        {
+            //Initialize columns
+            matrix[i][j] = 0.0f;
+        }
+    }
+    return matrix;
+}
+
+
+/**
+ * Checks if a frame is ok to use or if it will cause problems
+ */
+int VideoTexture::checkFrame(double** matrix, int frame)
+{
+    int size = 0; 
+    
+    //For each col at row[currentframe] add all the numbers together
+    for (int col=0; col<this->frameCount-1; col++)
+    {
+        size += round(matrix[frame][col] * 1000.0f);
+    }
+    
+    return size;
+}
 
 /**
  * Gets the highest probability next frame
@@ -687,12 +587,39 @@ void VideoTexture::generateAnticipateFutureCostMatrix(double p, double alpha, in
  */
 int VideoTexture::getNextFrameStochastically(int currentFrame, double** matrix)
 {
-    int size = 0; 
+    unsigned int size = 0; 
+    unsigned int power = 3;
+    double multiplication_factor = 1.0f;
     
-    //For each col at row[currentframe] add all the numbers together
-    for (int col=0; col<this->frameCount-1; col++)
+    //Avoid divide by zero
+    while (size == 0)
     {
-        size += round(matrix[currentFrame][col] * 1000.0f);
+        power++;
+        multiplication_factor = pow((double)10.0f, (double)power);
+        for (int col=0; col<this->frameCount-1; col++)
+        {
+            double foo = matrix[currentFrame][col] * multiplication_factor;
+            //cout << "Foo: " << round(foo) << endl;
+            size += round(foo);
+            //cout << "Size: " << size << endl;
+        }
+        
+    }
+    
+    
+    
+    if (size == 0)
+    {
+        //This is a hack, bail out of here because we're in a bad place
+        cout << "Caught critical error. Sum of all columns on probability matrix is 0!" << endl;
+        double sum = 0.0f;
+        for (int col=0; col<this->frameCount-1; col++)
+        {
+            sum += (matrix[currentFrame][col] * multiplication_factor);
+            cout << matrix[currentFrame][col] << " ";
+        }
+        cout << "Sum: " << sum << endl;
+        throw "Divide by zero error pending!";
     }
     
     //Create an array of size. This is our selection array
@@ -704,7 +631,7 @@ int VideoTexture::getNextFrameStochastically(int currentFrame, double** matrix)
     for (int col=0; col<this->frameCount-1; col++)
     {
         //Localsize is the size that the probability gives us
-        int localSize = round(matrix[currentFrame][col] * 1000.0f);
+        int localSize = round(matrix[currentFrame][col] * multiplication_factor);
         
         //Fill the selectArray with the current col index based on localsize
         for (int i=position; i<position+localSize; i++)
@@ -724,7 +651,8 @@ int VideoTexture::getNextFrameStochastically(int currentFrame, double** matrix)
     }
      */
     
-    return selectArray[rand() % size];
+    int nextFrame = selectArray[rand() % size];  
+    return nextFrame;
     
 }
 
@@ -732,7 +660,7 @@ int VideoTexture::getNextFrameStochastically(int currentFrame, double** matrix)
  * Plays the video texture
  * @param double** matrix to play from
  */
-void VideoTexture::randomPlay(double** matrix)
+void VideoTexture::randomPlay(double** matrix, double pruneThreshold, bool crossFade)
 {
     bool stop = false;
     int delay = 1000 / this->frameRate;
@@ -740,7 +668,42 @@ void VideoTexture::randomPlay(double** matrix)
     //Open a window
     cv::namedWindow("Video Texture");
     
-    int currentFrame = rand() % this->frameCount;
+    //Copy the matrix and normalize each row it so we don't get divide by zero errors
+    double** playMatrix = this->initMatrix(this->frameCount);
+    for (int i=0; i<this->frameCount; i++)
+    {
+        for (int j=0; j<this->frameCount; j++)
+        {
+            playMatrix[i][j] = matrix[i][j];
+        }
+    }
+    this->normalizeMatrixRows(playMatrix);
+    
+    //Prune transitions
+    this->pruneTransitions(playMatrix, pruneThreshold);
+    
+    //Check if this matrix is actually playable
+    for (int i=0; i<this->frameCount - 1; i++)
+    {
+        int countNumbersAboveZero = 0;
+        for (int j=0; j<this->frameCount; j++)
+        {
+            if (playMatrix[i][j] > 0.0f)
+                countNumbersAboveZero++;
+        }
+        if (countNumbersAboveZero <= 1)
+        {
+            this->printMatrix(playMatrix, this->frameCount);
+            cout << "Error with transitions at frame: " << i << ". There no transitions out of here.";
+            throw "Error";
+        }
+    }
+
+    
+    //Debug the matrix
+    //this->printMatrix(playMatrix, this->frameCount);
+    
+    int currentFrame = this->getNextFrameStochastically(0, playMatrix);
     
     while (!stop)
     {
@@ -750,7 +713,22 @@ void VideoTexture::randomPlay(double** matrix)
         cout << "Playing frame: " << currentFrame << endl;
 
         //Get the highest probability next transition
-        currentFrame = this->getNextFrameStochastically(currentFrame, matrix);
+        int nextFrame = this->getNextFrameStochastically(currentFrame, playMatrix);
+        
+        if (crossFade)
+        {
+            if (abs(nextFrame - currentFrame) > 1)
+            {
+                cv::Mat fadeFrame = this->createCrossFadeFrame(this->frames[currentFrame], this->frames[nextFrame]);
+                if (cv::waitKey(delay) >= 0)
+                {
+                    stop = true;
+                }
+                cout << "Playing frame: crossfade" << endl;
+                cv::imshow("Video Texture", fadeFrame);
+            }            
+        }
+        currentFrame = nextFrame;
         
         //Wait for key or delay
         if (cv::waitKey(delay) >= 0)
@@ -759,6 +737,26 @@ void VideoTexture::randomPlay(double** matrix)
         }
     }
 }
+
+/**
+ * Prunes lousy transitions
+ */
+void VideoTexture::pruneTransitions(double** matrix, double threshold)
+{
+    for (int i=0; i<this->frameCount; i++)
+    {
+        for (int j=0; j<this->frameCount; j++)
+        {
+            if (matrix[i][j] < threshold)
+            {
+                matrix[i][j] = 0.0f;
+            }
+        }
+    }
+    
+    this->normalizeMatrixRows(matrix);
+}
+
 
 /**
  * Generic debug method for printing the values of a matrix
@@ -856,4 +854,133 @@ void VideoTexture::showMatrix(string name, double** matrix, int size, bool inver
             stop = true;
         }
     }
+}
+
+/**
+ * Linear interpolation
+ */
+uchar VideoTexture::lerp(uchar from, uchar to, float amount)
+{
+    //Get the difference between from and to
+    return from + (amount * (to - from));
+    
+}
+
+
+/**
+ * Create a cross fade frame
+ */
+cv::Mat VideoTexture::createCrossFadeFrame(cv::Mat& from, cv::Mat& to)
+{
+    
+    cv::Mat result;
+    from.copyTo(result);
+    
+    for (int y = 0; y<from.rows; y++)
+    {
+        for (int x = 0; x<from.cols; x++)
+        {              
+            //Do the linear interpolation
+            result.at<cv::Vec3b>(y,x)[0] = lerp(from.at<cv::Vec3b>(y,x)[0], to.at<cv::Vec3b>(y,x)[0], 0.5f);; 
+            result.at<cv::Vec3b>(y,x)[1] = lerp(from.at<cv::Vec3b>(y,x)[1], to.at<cv::Vec3b>(y,x)[1], 0.5f);;
+            result.at<cv::Vec3b>(y,x)[2] = lerp(from.at<cv::Vec3b>(y,x)[2], to.at<cv::Vec3b>(y,x)[2], 0.5f);;
+            
+            //Debug
+            //cout << "(" << (int)redFrom << "," << (int)greenFrom << "," << (int)blueFrom << ") to (" << (int)redTo << "," << (int)greenTo << "," << (int)blueTo << ") = (" << (int)redResult << "," << (int)greenResult << "," << (int)blueResult << ")" << endl;
+            
+        }
+    }
+    
+    return result;
+    
+}
+
+
+/**
+ * Normalize a matrix
+ */
+/*
+void VideoTexture::normalizeMatrix(double **matrix)
+{
+    //Normalize the ENTIRE matrix, not just each row
+    double max = 0.0f;  //First pass calculates the maximum in the entire matrix
+    for (int row=0; row < this->frameCount; row++)
+    {
+        //First get the max
+        for (int col=0; col < this->frameCount; col++)
+        {
+            if (matrix[row][col] > max)
+            {
+                max = matrix[row][col];
+            }
+        }
+    }
+    
+    //Second pass normalizes each item
+    for (int row=0; row < this->frameCount; row++)
+    {
+        for (int col=0; col < this->frameCount; col++)
+        { 
+            matrix[row][col] /= max;
+        }
+    }
+    
+    
+}*/
+
+/**
+ * Normalizes each row so that it adds up to 1
+ */
+void VideoTexture::normalizeMatrixRows(double **matrix)
+{
+    //For each row
+    for (int row=0; row < this->frameCount; row++)
+    {
+        double sum = 0.0f;
+        
+        //First get the max
+        for (int col=0; col < this->frameCount; col++)
+        {
+            sum += matrix[row][col];
+        }
+        
+        //Divide the current value by the max for the row
+        for (int col=0; col < this->frameCount; col++)
+        { 
+            if (sum > 0.0f)
+                matrix[row][col] /= sum;
+            else 
+                matrix[row][col] = 0.0f;
+        }
+    }
+}
+
+
+/**
+ * Normalizes the entire matrix so that its maxima is 1
+ * @todo rename this function.
+ */
+void VideoTexture::normalizeMatrix(double **matrix)
+{
+    //double sum = 0.0f;
+    double max = 0.0f;
+    
+    for (int row=0; row < this->frameCount; row++)
+    {
+        for (int col=0; col < this->frameCount; col++)
+        {
+            if (matrix[row][col] > max)
+            {
+                max = matrix[row][col];
+            }
+        }
+    }
+    
+    for (int row=0; row < this->frameCount; row++)
+    {        
+        for (int col=0; col < this->frameCount; col++)
+        { 
+            matrix[row][col] /= max;
+        }
+    }    
 }
