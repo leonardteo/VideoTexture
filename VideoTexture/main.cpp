@@ -29,7 +29,7 @@ struct FileSetting
     double pruneThreshold;
 };
 
-FileSetting candle, catseyes, deadend, fireplace, fireplace2, flag, puppy, vtclock, vtclock_deadend, southpark1;
+FileSetting candle, catseyes, deadend, fireplace, fireplace2, flag, puppy, vtclock, vtclock_deadend, southpark1, southpark2;
 
 /**
  * Initialize a bunch of examples
@@ -85,7 +85,11 @@ void initFiles()
     southpark1.sigma = 0.1f;
     southpark1.scale = 1;
     southpark1.pruneThreshold = 0.0f;
-    
+
+    southpark2.filename = "southpark2.mp4";
+    southpark2.sigma = 0.04f;
+    southpark2.scale = 1;
+    southpark2.pruneThreshold = 0.0f;    
 }
 
 
@@ -100,7 +104,7 @@ int main (int argc, const char * argv[])
     string videoPath = "/Users/leonardteo/Movies/";
     string cachePath = "/Users/leonardteo/Desktop/Temp/videotexture_cache/";
     
-    FileSetting fileSetting = southpark1;
+    FileSetting fileSetting = deadend;
     
     int image_scale = fileSetting.scale;
     double sigma = fileSetting.sigma;
@@ -108,8 +112,6 @@ int main (int argc, const char * argv[])
     
     string filename = videoPath + fileSetting.filename;
     string cachefile = cachePath + fileSetting.filename + ".txt";
-    
-    
     
     VideoTexture *videoTexture; 
     
@@ -151,10 +153,10 @@ int main (int argc, const char * argv[])
         //Show the anticipated future cost matrices
         videoTexture->showMatrix("Anticipated future cost probability matrix", videoTexture->anticipatedFutureCostProbabilityMatrix, videoTexture->frameCount, false, image_scale);
         
-        videoTexture->randomPlay(videoTexture->anticipatedFutureCostProbabilityMatrix, pruneThreshold);
+        //videoTexture->randomPlay(videoTexture->anticipatedFutureCostProbabilityMatrix, pruneThreshold);
         
-        
-        //videoTexture->randomPlay();
+        videoTexture->findTransitions(videoTexture->anticipatedFutureCostMatrix, 50);
+
         
     } catch (string e) {
         cout << e << endl;

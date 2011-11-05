@@ -473,7 +473,7 @@ void VideoTexture::generateAnticipatedFutureCostMatrix(double p, double alpha, d
     while (!converged)
     {
         passCount++;
-        cout << "Pass: " << passCount << endl;
+        //cout << "Pass: " << passCount << endl;
         
         //Step 1 - Find the minimum distance for each row  min_k D''jk
         for (int j = 0; j < this->frameCount; j++)
@@ -895,7 +895,6 @@ cv::Mat VideoTexture::createCrossFadeFrame(cv::Mat& from, cv::Mat& to)
     
 }
 
-
 /**
  * Normalize a matrix
  */
@@ -984,3 +983,78 @@ void VideoTexture::normalizeMatrix(double **matrix)
         }
     }    
 }
+
+
+/**
+ * Find the best transitions in a video
+ */
+void VideoTexture::findTransitions(double** matrix, int numTransitions)
+{
+    vector<Transition> transitions;
+    
+    //Find the minimum numTransitions transitions
+    int count = 0;
+    
+    
+    //First calculate the global max
+    double max = 0.0f;
+    for (int i=0; i<this->frameCount; i++)
+    {
+        for (int j=0; j<i; j++)
+        {
+            if (matrix[i][j] > max)
+            {
+                max = matrix[i][j];
+            }
+        }
+    }
+    
+    double global_min = 0.0f;   //Var that controls the minimum transition to check against
+    
+    while (count < numTransitions)
+    {
+        //Find the best minimum cost transition where i>=j
+        
+        //Calculate min
+        double min = max;
+        int min_i = 0;
+        int min_j = 0;
+        for (int i=0; i<this->frameCount; i++)
+        {
+            for (int j=0; j<i; j++)
+            {
+                if (matrix[i][j] < min && matrix[i][j] > global_min)
+                {
+                    min = matrix[i][j];
+                    min_i = i;
+                    min_j = j;
+                }
+            }
+        }
+        
+        global_min = min;
+        
+        Transition transition;
+        transition.cost = min;
+        transition.startFrame = min_i;
+        transition.endFrame = min_j;
+        transition.length = min_i - min_j;
+        
+        transitions.push_back(transition);
+        
+        //cout << "Best transition: " << transition.startFrame << " to " << transition.endFrame << " costing: " << transition.cost << " length: " << transition.length << endl;
+        
+        count++;
+    }
+    
+    for (int i=0; i<transitions.size(); i++)
+    {
+        Transition transition = transitions[i];
+        cout << i << ". " << transition.startFrame << " to " << transition.endFrame << " costing: " << transition.cost << " length: " << transition.length << endl;
+    }
+    
+}
+
+
+
+

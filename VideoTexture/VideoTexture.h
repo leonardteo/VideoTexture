@@ -17,6 +17,18 @@
 
 using namespace std;
 
+
+/**
+ * Transitions
+ */
+struct Transition {
+    int startFrame;
+    int endFrame;
+    int length;
+    double cost;
+};
+
+
 /**
  * Class definition for VideoTexture
  */
@@ -52,10 +64,14 @@ public:
     double **anticipatedFutureCostMatrix;
     double **anticipatedFutureCostProbabilityMatrix;
     
-
-    
     //FrameCount
     int frameCount;    
+    
+    //list of transitions
+    
+    
+    
+    //METHODS
     
     //Constructor
     VideoTexture(string file, double sigma);
@@ -129,6 +145,11 @@ public:
     
     //Prune transitions
     void pruneTransitions(double** matrix, double threshold);
+    
+    //Write video
+    
+    //Find Transitions
+    void findTransitions(double** matrix, int numTransitions = 10);
     
 };
 
