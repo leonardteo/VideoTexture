@@ -990,7 +990,7 @@ void VideoTexture::normalizeMatrix(double **matrix)
  */
 void VideoTexture::findTransitions(double** matrix, int numTransitions)
 {
-    vector<Transition> transitions;
+    vector<Transition*>* transitions = new vector<Transition*>();
     
     //Find the minimum numTransitions transitions
     int count = 0;
@@ -1034,27 +1034,235 @@ void VideoTexture::findTransitions(double** matrix, int numTransitions)
         
         global_min = min;
         
-        Transition transition;
-        transition.cost = min;
-        transition.startFrame = min_i;
-        transition.endFrame = min_j;
-        transition.length = min_i - min_j;
+        Transition* transition = Transition::create(min_i, min_j, min);
+        transition->asc();
         
-        transitions.push_back(transition);
+        transitions->push_back(transition);
         
         //cout << "Best transition: " << transition.startFrame << " to " << transition.endFrame << " costing: " << transition.cost << " length: " << transition.length << endl;
         
         count++;
     }
     
-    for (int i=0; i<transitions.size(); i++)
+    //Debug the transitions
+    for (int i=0; i<transitions->size(); i++)
     {
-        Transition transition = transitions[i];
-        cout << i << ". " << transition.startFrame << " to " << transition.endFrame << " costing: " << transition.cost << " length: " << transition.length << endl;
+        Transition* transition = transitions->at(i);
+        cout << i << ". " << transition->startFrame << " to " << transition->endFrame << " costing: " << transition->cost << " length: " << transition->length << endl;
     }
+    
+    this->transitions = transitions;
+    
+}
+
+
+/**
+ * Magically creates a compound loop or returns NULL
+ */
+VideoLoop* VideoTexture::createCompoundLoop(VideoLoop*** table, int numRows, int numColumns, int currentRow, int currentColumn)
+{
+    //OMG
+    bool debug = false;
+    
+    int targetFrames = currentRow + 1;  //Target number of frames is the current row that we're in.
+    
+    //examine all compound loops of
+    //shorter length in that same column, and tries to combine them with
+    //compound loops from columns whose primitive loops have ranges
+    //that overlap that of the column being considered.    
+    
+    vector<VideoLoop*>* matches = new vector<VideoLoop*>();
+    
+    //Step 1 - examine all compound loops of shorter length in the same column
+    for (int row=0; row < currentRow; row++)
+    {
+        if (table[row][currentColumn]->length() > 0)
+        {
+            matches->push_back(table[row][currentColumn]);    //Add it to the list of matches
+        }
+    }
+    
+    
+    //Step 2 - try to combine each compound loop with other compound loops from columns that overlap and that add up to the target number of frames
+    //For each match
+    vector<VideoLoop*>* newCompoundLoops = new vector<VideoLoop*>();
+    
+    for (int i=0; i<matches->size(); i++)
+    {
+        //Loop through the table
+        for (int row=0; row < currentRow; row++)
+        {
+            for (int col=0; col < numColumns; col++)
+            {
+                //If the compound loop overlaps...
+                /*
+                if (debug) 
+                {
+                    cout << "[" << row << "," << col << "]" << endl;
+                }*/
+                
+                
+                
+                if (matches->at(i)->overlaps(table[row][col]))
+                {
+                    
+                    //And if the compound loop adds up to the target number of frames, Create a new compound loop and return it
+                    if (matches->at(i)->length() + table[row][col]->length() == targetFrames)
+                    {
+                        VideoLoop* newLoop = VideoLoop::create(matches->at(i));
+                        
+                        if (debug) newLoop->printLoops();
+                        
+                        newLoop->addLoops(table[row][col]);
+                        newCompoundLoops->push_back(newLoop);
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
+    //If we're empty, return null
+    if (newCompoundLoops->size() == 0)
+    {
+        return NULL;
+    }
+    
+    //Otherwise calculate the lowest cost compound loop
+    double max = 0.0f;
+    int max_i = 0;
+    for (int i=0; i<newCompoundLoops->size(); i++)
+    {
+        if (newCompoundLoops->at(i)->totalCost() > max)
+        {
+            max = newCompoundLoops->at(i)->totalCost();
+            max_i = i;
+        }
+    }
+    
+    double min = max;
+    int min_i = max_i;
+    for (int i=0; i<newCompoundLoops->size(); i++)
+    {
+        if (newCompoundLoops->at(i)->totalCost() < min)
+        {
+            min = newCompoundLoops->at(i)->totalCost();
+            min_i = i;
+        }
+    }
+    
+    return newCompoundLoops->at(min_i);
     
 }
 
 
 
+/**
+ * Generate the transitions table
+ */
+void VideoTexture::generateTransitionsTable(vector<Transition*>* transitions, int maxFrames)
+{
+    int numTransitions = (int) transitions->size();
+    
+    //Make a beautiful L x N table
+    //L = max number of frames being considered
+    //N = Number of transitions
+    
+    //Declare the table rows
+    VideoLoop*** table = new VideoLoop**[maxFrames];
+    
+    //Initialize the table
+    for (int row=0; row<maxFrames; row++) {
+        
+        //Declare and initialize the column
+        table[row] = new VideoLoop*[numTransitions]; 
+        
+        //Initialize video loops
+        for (int col=0; col<numTransitions; col++)
+        {
+            table[row][col] = new VideoLoop();
+        }
+       
+    }
+    
+    //Construct the table
+    
+    //For each row
+    for (int row=0; row<maxFrames; row++) {
+        
+        int currentNumberOfFramesToTarget = row+1;  //Set the maximum number of frames being considered
+        
+        //For each column/transition being considered
+        for (int col=0; col<numTransitions; col++)
+        {
+            //cout << "At table [" << row << "," << col << "]" << endl;
+            
+            //If the length of the transition exceeds the number of frames, don't bother
+            if (transitions->at(col)->length > currentNumberOfFramesToTarget)
+            {
+                continue;
+            }
+            
+            //If the length of the transition is the number of frames, set it as a simple loop
+            if (transitions->at(col)->length == currentNumberOfFramesToTarget)
+            {
+                table[row][col]->addLoop(transitions->at(col));
+                continue;
+            }
+            
+            //Use uber procedure
+            VideoLoop* newLoop = this->createCompoundLoop(table, maxFrames, numTransitions, row, col);
+            
+            
+            if (newLoop != NULL)
+            {
+                //cout << "Adding new compound loop to table at: [" << row << "," << col << "] with loops: ";
+                //newLoop->printLoops();
+                //cout << endl;
+                
+                table[row][col] = newLoop;
+            }
+                
+        }   
+    }
+    
+    //Debug the table
+    cout << endl << "Debugging Transitions Table" << endl;
+    
+    for (int row=0; row<maxFrames; row++) {
+        
+        int currentNumberOfFramesToTarget = row + 1;
+        cout << currentNumberOfFramesToTarget << ": ";  //Echo out the current number of frames we are targeting
+        //For each transition being considered
+        for (int col=0; col<numTransitions; col++)
+        {
+            cout << table[row][col]->numLoops() << " ";
+        }   
+        cout << endl;
+    }
+    
+    //Debug the compound loops
+    for (int row=0; row<maxFrames; row++) {
+        
+        int currentNumberOfFramesToTarget = row + 1;
+
+        //For each transition being considered
+        for (int col=0; col<numTransitions; col++)
+        {
+            //If there is a compound/simple loop here
+            if (table[row][col]->numLoops() > 0)
+            {
+                cout << "Loop (" << currentNumberOfFramesToTarget << "): ";
+                
+                //Show each loop
+                table[row][col]->printLoops();
+                
+                cout << endl;
+            }
+        }   
+    }
+    
+    
+}
 

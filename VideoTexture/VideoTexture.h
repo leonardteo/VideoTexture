@@ -11,22 +11,13 @@
 //Include OpenCV libraries
 #include "core.hpp"
 #include "imgproc.hpp"
+#include "VideoLoop.h"
+#include "Transition.h"
 
 #ifndef VIDEOTEXTURE_H
 #define VIDEOTEXTURE_H
 
 using namespace std;
-
-
-/**
- * Transitions
- */
-struct Transition {
-    int startFrame;
-    int endFrame;
-    int length;
-    double cost;
-};
 
 
 /**
@@ -68,7 +59,7 @@ public:
     int frameCount;    
     
     //list of transitions
-    
+    vector<Transition*>* transitions;
     
     
     //METHODS
@@ -150,6 +141,13 @@ public:
     
     //Find Transitions
     void findTransitions(double** matrix, int numTransitions = 10);
+    void generateTransitionsTable(vector<Transition*>* transitions, int maxFrames);
+    
+    static bool transitionsOverlap(Transition transition1, Transition transition2);
+    
+    VideoLoop* createCompoundLoop(VideoLoop*** table, int numRows, int numColumns, int currentRow, int currentColumn);
+
+    
     
 };
 

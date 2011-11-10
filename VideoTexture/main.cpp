@@ -104,7 +104,7 @@ int main (int argc, const char * argv[])
     string videoPath = "/Users/leonardteo/Movies/";
     string cachePath = "/Users/leonardteo/Desktop/Temp/videotexture_cache/";
     
-    FileSetting fileSetting = deadend;
+    FileSetting fileSetting = vtclock;
     
     int image_scale = fileSetting.scale;
     double sigma = fileSetting.sigma;
@@ -155,7 +155,8 @@ int main (int argc, const char * argv[])
         
         //videoTexture->randomPlay(videoTexture->anticipatedFutureCostProbabilityMatrix, pruneThreshold);
         
-        videoTexture->findTransitions(videoTexture->anticipatedFutureCostMatrix, 50);
+        videoTexture->findTransitions(videoTexture->anticipatedFutureCostMatrix, 10);
+        videoTexture->generateTransitionsTable(videoTexture->transitions, 20);
 
         
     } catch (string e) {
