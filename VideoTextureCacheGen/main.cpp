@@ -13,7 +13,7 @@ int main (int argc, const char* argv[])
     string cachePath = "/Users/leonardteo/Desktop/Temp/videotexture_cache/";
     
     string files[] = {
-        "southpark2.mp4"
+        "candle2.mov"
     };
     
     int num_files = 1;

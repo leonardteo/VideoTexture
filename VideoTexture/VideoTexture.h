@@ -7,12 +7,21 @@
 //
 
 #include <iostream>
+#include <exception>
+#include <math.h>
+#include <fstream>
+#include <algorithm>
 
 //Include OpenCV libraries
 #include "core.hpp"
 #include "imgproc.hpp"
+#include "highgui.hpp"
+
+//My libraries
 #include "VideoLoop.h"
 #include "Transition.h"
+#include "TransitionsTable.h"
+
 
 #ifndef VIDEOTEXTURE_H
 #define VIDEOTEXTURE_H
@@ -140,14 +149,20 @@ public:
     //Write video
     
     //Find Transitions
-    void findTransitions(double** matrix, int numTransitions = 10);
-    void generateTransitionsTable(vector<Transition*>* transitions, int maxFrames);
+    void findTransitions(double** matrix, int numTransitions = 10, int min_length = 1);
+    
+    //Generate the transitions table
+    TransitionsTable* generateTransitionsTable(vector<Transition*>* transitions, int maxFrames);
     
     static bool transitionsOverlap(Transition transition1, Transition transition2);
     
     VideoLoop* createCompoundLoop(VideoLoop*** table, int numRows, int numColumns, int currentRow, int currentColumn);
 
+    //Write out the video
+    void writeVideoTextures(TransitionsTable* transitionsTable, string filename);
     
+    VideoLoop* sequenceLoop(VideoLoop* compoundLoop);
+    void writeVideoTexture(VideoLoop* compoundLoop, string filename);
     
 };
 

@@ -6,14 +6,8 @@
 //  Copyright 2011 Leonard Teo. All rights reserved.
 //
 
-#include <exception>
-#include <math.h>
-#include <fstream>
-#include <algorithm>
+
 #include "VideoTexture.h"
-#include "core.hpp"
-#include "highgui.hpp"
-#include "imgproc.hpp"
 
 /**
  * Constructor
@@ -59,6 +53,20 @@ void VideoTexture::loadVideo(string file)
     this->frameRate = capture.get(CV_CAP_PROP_FPS);
     this->width = (int) capture.get(CV_CAP_PROP_FRAME_WIDTH);
     this->height = (int) capture.get(CV_CAP_PROP_FRAME_HEIGHT);
+    
+
+    union {
+        int value;
+        char code[4];
+    } codec_union;
+    
+    codec_union.value = (int) capture.get(CV_CAP_PROP_FOURCC);
+    char codec[4];
+    codec[0] = codec_union.code[0];
+    codec[1] = codec_union.code[1];
+    codec[2] = codec_union.code[2];    
+    codec[3] = codec_union.code[3];
+    cout << "Codec: " << codec[0] << codec[1] << codec[2] << codec[3] << endl;
     
     cout << "Framerate: " << this->frameRate << endl;
     cout << "Width: " << this->width << endl;
@@ -988,7 +996,7 @@ void VideoTexture::normalizeMatrix(double **matrix)
 /**
  * Find the best transitions in a video
  */
-void VideoTexture::findTransitions(double** matrix, int numTransitions)
+void VideoTexture::findTransitions(double** matrix, int numTransitions, int min_length)
 {
     vector<Transition*>* transitions = new vector<Transition*>();
     
@@ -1037,11 +1045,12 @@ void VideoTexture::findTransitions(double** matrix, int numTransitions)
         Transition* transition = Transition::create(min_i, min_j, min);
         transition->asc();
         
-        transitions->push_back(transition);
+        if (transition->length >= min_length)
+        {
+            transitions->push_back(transition);            
+            count++;
+        }
         
-        //cout << "Best transition: " << transition.startFrame << " to " << transition.endFrame << " costing: " << transition.cost << " length: " << transition.length << endl;
-        
-        count++;
     }
     
     //Debug the transitions
@@ -1161,7 +1170,7 @@ VideoLoop* VideoTexture::createCompoundLoop(VideoLoop*** table, int numRows, int
 /**
  * Generate the transitions table
  */
-void VideoTexture::generateTransitionsTable(vector<Transition*>* transitions, int maxFrames)
+TransitionsTable* VideoTexture::generateTransitionsTable(vector<Transition*>* transitions, int maxFrames)
 {
     int numTransitions = (int) transitions->size();
     
@@ -1173,6 +1182,7 @@ void VideoTexture::generateTransitionsTable(vector<Transition*>* transitions, in
     VideoLoop*** table = new VideoLoop**[maxFrames];
     
     //Initialize the table
+    cout << "Creating transitions table with dimensions: " << maxFrames << " rows, " << numTransitions << " columns." << endl;
     for (int row=0; row<maxFrames; row++) {
         
         //Declare and initialize the column
@@ -1186,6 +1196,9 @@ void VideoTexture::generateTransitionsTable(vector<Transition*>* transitions, in
        
     }
     
+    int totalCells = maxFrames * numTransitions;
+    int cellsProduced = 0;
+    
     //Construct the table
     
     //For each row
@@ -1197,6 +1210,10 @@ void VideoTexture::generateTransitionsTable(vector<Transition*>* transitions, in
         for (int col=0; col<numTransitions; col++)
         {
             //cout << "At table [" << row << "," << col << "]" << endl;
+            //Give some feedback to the user
+            cellsProduced++;
+            double progress = ((double)cellsProduced / (double)totalCells) * 100.0f;
+            cout << "Progress: " << progress << "%" << endl;
             
             //If the length of the transition exceeds the number of frames, don't bother
             if (transitions->at(col)->length > currentNumberOfFramesToTarget)
@@ -1226,43 +1243,144 @@ void VideoTexture::generateTransitionsTable(vector<Transition*>* transitions, in
                 
         }   
     }
-    
-    //Debug the table
-    cout << endl << "Debugging Transitions Table" << endl;
-    
-    for (int row=0; row<maxFrames; row++) {
         
-        int currentNumberOfFramesToTarget = row + 1;
-        cout << currentNumberOfFramesToTarget << ": ";  //Echo out the current number of frames we are targeting
-        //For each transition being considered
-        for (int col=0; col<numTransitions; col++)
-        {
-            cout << table[row][col]->numLoops() << " ";
-        }   
-        cout << endl;
-    }
+    TransitionsTable* returnTable = new TransitionsTable(table, maxFrames, numTransitions);
+    return returnTable;
     
-    //Debug the compound loops
-    for (int row=0; row<maxFrames; row++) {
-        
-        int currentNumberOfFramesToTarget = row + 1;
+    
+}
 
-        //For each transition being considered
-        for (int col=0; col<numTransitions; col++)
-        {
-            //If there is a compound/simple loop here
-            if (table[row][col]->numLoops() > 0)
-            {
-                cout << "Loop (" << currentNumberOfFramesToTarget << "): ";
-                
-                //Show each loop
-                table[row][col]->printLoops();
-                
-                cout << endl;
-            }
-        }   
+/**
+ * Write out the video
+ */
+void VideoTexture::writeVideoTextures(TransitionsTable* transitionsTable, string filename)
+{
+    //Debug the incoming transitions table
+    transitionsTable->print();
+    
+    //Get the loops
+    vector<VideoLoop*>* loops = transitionsTable->getLoops();
+    
+    //Get the last 4
+    for (int i=0; i<4; i++)
+    {
+        //Convert int to string (REALLY!?)
+        char numstr[21]; // enough to hold all numbers up to 64-bits
+        sprintf(numstr, "%d", i);
+      
+        
+        VideoLoop* loop = loops->back();
+        loops->pop_back();
+        
+        VideoLoop* sequence = this->sequenceLoop(loop);
+        cout << "Sequence #" << numstr << ": ";
+        sequence->printLoops();
+        cout << endl;
+        
+        string l_filename = filename + numstr + ".mov";
+        this->writeVideoTexture(sequence, l_filename);
     }
     
     
+}
+
+/**
+ * Write out an individual video
+ */
+void VideoTexture::writeVideoTexture(VideoLoop *compoundLoop, string filename)
+{
+    //Start the writer
+    cv::VideoWriter writer(filename, CV_FOURCC('j', 'p', 'e', 'g'), frameRate, cvSize(this->width, this->height)); 
+
+    if (!writer.isOpened())
+    {
+        cout << "Error: Could not open video writer for " << filename << endl;
+        return;
+    }
+    
+    
+    int startFrame = compoundLoop->minFrame;
+    int lastFrameWritten;
+    Transition* currentTransition = compoundLoop->popFirst();
+    
+    for (int i=startFrame; i<currentTransition->endFrame; i++)
+    {
+        writer.write(this->frames[i]);
+        lastFrameWritten = i;
+    }
+    
+    //For the remaining loops
+    while (currentTransition != NULL)
+    {
+        cv::Mat crossfade = this->createCrossFadeFrame(this->frames[lastFrameWritten], this->frames[currentTransition->startFrame]); 
+        writer.write(crossfade);
+        
+        startFrame = currentTransition->startFrame;
+        currentTransition = compoundLoop->popFirst();
+        if (currentTransition == NULL)
+            break;
+        for (int i=startFrame; i<currentTransition->endFrame; i++)
+        {
+            writer.write(this->frames[i]);
+            lastFrameWritten = i;
+        }
+    }
+    
+}
+
+/**
+ * Sequence a Compound Loop
+ */
+VideoLoop* VideoTexture::sequenceLoop(VideoLoop* compoundLoop)
+{
+    /*
+    cout << "Incoming compound loop: ";
+    compoundLoop->printLoops();
+    cout << endl;
+     */
+    
+    if (compoundLoop->numLoops() == 0)
+    {
+        cout << "Error: Number of loops is zero" << endl;
+        return NULL;
+    }
+    
+    //Create a sequence with the maxima in the current compound loop
+    Transition* maxima = compoundLoop->popMaxima();
+    /*
+    cout << "Popped Local maxima: ";
+    maxima->print();
+    cout << endl;
+    
+    cout << "Remaining compound loop: ";
+    compoundLoop->printLoops();
+    cout << endl;
+     */
+    
+    VideoLoop* sequence = VideoLoop::create(maxima);
+    
+    vector<VideoLoop*>* ranges = compoundLoop->getRanges();
+    
+    if (ranges == NULL)
+    {
+        return sequence;
+    }  
+    if (ranges->size() == 0)
+    {
+        return sequence;
+    }
+    
+    //cout << "Range size: " << ranges->size() << endl;
+    VideoLoop* firstRange = ranges->at(0);
+    
+    // Only consider the first range and recurse
+    VideoLoop* sequence2 = this->sequenceLoop(firstRange);
+    
+    if (sequence2 != NULL)
+    {
+        sequence->addLoops(sequence2);
+    }
+    
+    return sequence;
 }
 

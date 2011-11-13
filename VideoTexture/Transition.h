@@ -9,7 +9,10 @@
 #ifndef TRANSITION_H
 #define TRANSITION_H
 
+#include <iostream>
 #include <math.h>
+
+using namespace std;
 
 class Transition
 {
@@ -24,6 +27,7 @@ public:
     //Object methods
     bool overlaps(Transition* transition);
     void asc(); 
+    void print();
     
     //Static methods
     static Transition* create(int startFrame, int endFrame, double cost, char ID = ' ');

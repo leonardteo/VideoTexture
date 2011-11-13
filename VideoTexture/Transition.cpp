@@ -36,3 +36,9 @@ void Transition::asc()
        this->endFrame = temp;
    }
 }
+
+
+void Transition::print()
+{
+    cout << this->ID << "[" << this->startFrame << "," << this->endFrame << "]";
+}

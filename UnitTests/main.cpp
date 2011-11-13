@@ -75,8 +75,8 @@ VideoLoop* createCompoundLoop(VideoLoop*** table, int numRows, int numColumns, i
                     //And if the compound loop adds up to the target number of frames, Create a new compound loop and return it
                     if (matches->at(i)->length() + table[row][col]->length() == targetFrames)
                     {
-                        VideoLoop* newLoop = VideoLoop::create(matches->at(i));
-                        newLoop->addLoops(table[row][col]);
+                        VideoLoop* newLoop = VideoLoop::create(table[row][col]);
+                        newLoop->addLoops(matches->at(i));
                         newCompoundLoops->push_back(newLoop);
                     }
                 }
@@ -114,6 +114,74 @@ VideoLoop* createCompoundLoop(VideoLoop*** table, int numRows, int numColumns, i
     
     return newCompoundLoops->at(min_i);
     
+}
+
+
+/**
+ * Sequence a video
+ */
+void sequenceVideo(VideoLoop ***table, int cols, int numFrames)
+{
+    //Sequence each loop in the numframes row
+    for (int i=0; i<cols; i++)
+    {
+        //COPY the loop so we don't affect the table
+        VideoLoop* loop = table[numFrames][i];
+        
+        //Sequence the loop
+        
+    }
+}
+
+/**
+ * Sequence a Compound Loop
+ */
+VideoLoop* sequenceLoop(VideoLoop* compoundLoop)
+{
+    cout << "Incoming compound loop: ";
+    compoundLoop->printLoops();
+    cout << endl;
+    
+    if (compoundLoop->numLoops() == 0)
+    {
+        return NULL;
+    }
+    
+    //Create a sequence with the maxima in the current compound loop
+    Transition* maxima = compoundLoop->popMaxima();
+    cout << "Popped Local maxima: ";
+    maxima->print();
+    cout << endl;
+    
+    cout << "Remaining compound loop: ";
+    compoundLoop->printLoops();
+    cout << endl;
+    
+    VideoLoop* sequence = VideoLoop::create(maxima);
+    
+    vector<VideoLoop*>* ranges = compoundLoop->getRanges();
+    
+    if (ranges == NULL)
+    {
+        return sequence;
+    }  
+    if (ranges->size() == 0)
+    {
+        return sequence;
+    }
+    
+    cout << "Range size: " << ranges->size() << endl;
+    VideoLoop* firstRange = ranges->at(0);
+    
+    //Only consider the first range and recurse
+    VideoLoop* sequence2 = sequenceLoop(firstRange);
+    
+    if (sequence2 != NULL)
+    {
+        sequence->addLoops(sequence2);
+    }
+    
+    return sequence;
 }
 
 
@@ -230,6 +298,75 @@ void testTable()
     
 }
 
+/**
+ * Test the range split function
+ */
+void testRanges()
+{
+    //Create our initial transitions
+    Transition* A = Transition::create(4, 9, 2, 'A');
+    Transition* B = Transition::create(7, 8, 3, 'B');
+    Transition* C = Transition::create(2, 5, 4, 'C');
+    Transition* D = Transition::create(1, 3, 5, 'D');
+    
+    //Add it to a compound loop
+    VideoLoop* compoundLoop = VideoLoop::create(A);
+    compoundLoop->addLoop(B);
+    compoundLoop->addLoop(C);
+    compoundLoop->addLoop(D);
+    
+    //Pop the maxima (should be A)
+    Transition* maxima = compoundLoop->popMaxima();
+    cout << "Maxima: ";
+    maxima->print();
+    cout << endl;
+    
+    assertIntEquals(maxima->startFrame, 4);
+    assertIntEquals(maxima->endFrame, 9);
+    
+    cout << "Loops left: ";
+    compoundLoop->printLoops();
+    cout << endl;
+    
+    
+    //Get the ranges
+    vector<VideoLoop*>* ranges = compoundLoop->getRanges();
+    
+    assertIntEquals((int)ranges->size(), 2);
+    
+    //Print the ranges
+    for (int i=0; i<ranges->size(); i++)
+    {
+        cout << "Range #" << i << ": ";
+        ranges->at(i)->printLoops();
+        cout << endl;
+    }
+    
+
+    
+}
+
+
+void testSequencing()
+{
+    //Create our initial transitions
+    Transition* A = Transition::create(4, 9, 2, 'A');
+    Transition* B = Transition::create(7, 8, 3, 'B');
+    Transition* C = Transition::create(2, 5, 4, 'C');
+    Transition* D = Transition::create(1, 3, 5, 'D');
+    
+    //Add it to a compound loop
+    VideoLoop* compoundLoop = VideoLoop::create(A);
+    compoundLoop->addLoop(B);
+    compoundLoop->addLoop(C);
+    compoundLoop->addLoop(D);
+    
+    //Test sequencing
+    VideoLoop* sequence = sequenceLoop(compoundLoop);
+    cout << "Final sequence: ";
+    sequence->printLoops();
+    cout << endl;
+}
 
 
 int main (int argc, const char * argv[])
@@ -305,7 +442,12 @@ int main (int argc, const char * argv[])
     assertIntEquals(11, videoLoop->length());
     
     
-    testTable();
+    //testTable();
+    
+    //Test ranges
+    //testRanges();
+    
+    testSequencing();
     
     cout << "If you don't see any errors, unit tests passed!" << endl;
     

@@ -182,5 +182,174 @@ double VideoLoop::totalCost()
     return sum;
 }
 
+/**
+ * Get the index of the loop with the highest end frame
+ */
+int VideoLoop::getMaxima()
+{
+    //If length is 0, fail
+    if (this->numLoops() == 0)
+    {
+        return -1;
+    }
+    
+    //If length is 1, return the first loop
+    if (this->numLoops() == 1)
+    {
+        return 0;
+    }
+    
+    int maxFrame = 0;
+    int max_i = 0;
+    for (int i=0; i<this->numLoops(); i++)
+    {
+        if (this->loops->at(i)->endFrame > maxFrame)
+        {
+            maxFrame = this->loops->at(i)->endFrame;
+            max_i = i;
+        }
+    }
+    return max_i; 
+}
+
+/**
+ * Pops the maxima out of the list
+ */
+Transition* VideoLoop::popMaxima()
+{
+    int maxima = this->getMaxima();
+    if (maxima < 0)
+    {
+        return NULL;    //fail
+    }
+    Transition* transition = this->loops->at(maxima);
+    this->loops->erase(this->loops->begin() + maxima);
+    
+    //Set the endFrame again
+    int maxFrame = 0;
+    for (int i=0; i<this->numLoops(); i++)
+    {
+        if (this->loops->at(i)->endFrame > maxFrame)
+        {
+            maxFrame = this->loops->at(i)->endFrame;
+        }
+    }
+    this->maxFrame = maxFrame;
+    
+    return transition;
+    
+}
+
+/**
+ * Pops the first Loop off
+ */
+Transition* VideoLoop::popFirst()
+{
+    if (this->loops->size() == 0)
+    {
+        return NULL;
+    }
+    
+    Transition* transition = this->loops->front();
+    this->loops->erase(this->loops->begin());
+    
+    //Set the start and endFrame again
+    int maxFrame = 0;
+    for (int i=0; i<this->numLoops(); i++)
+    {
+        if (this->loops->at(i)->endFrame > maxFrame)
+        {
+            maxFrame = this->loops->at(i)->endFrame;
+        }
+    }
+    this->maxFrame = maxFrame;
+    
+    int minFrame = maxFrame;
+    for (int i=0; i<this->numLoops(); i++)
+    {
+        if (this->loops->at(i)->startFrame < minFrame)
+        {
+            minFrame = this->loops->at(i)->startFrame;
+        }
+    }
+    this->minFrame = minFrame;
+    
+    return transition;
+}
+
+/**
+ * Get ranges from a video loop that has had its maxima popped (sounds rude!)
+ */
+vector<VideoLoop*>* VideoLoop::getRanges()
+{
+    //Check if there's anything to do
+    if (this->numLoops() == 0)
+    {
+        return NULL;
+    }
+    
+    //Create a new set of ranges
+    vector<VideoLoop*>* ranges = new vector<VideoLoop*>();
+    
+    VideoLoop* currentRange;
+    
+    //If there's only 1 just deal with it
+    if (this->numLoops() == 1)
+    {
+        currentRange = VideoLoop::create(this->loops->at(0));
+        ranges->push_back(currentRange);
+        return ranges;
+    }
+    
+    for (int i=0; i<this->numLoops(); i++)
+    {
+        //If this is the first loop
+        if (i == 0)
+        {
+            currentRange = VideoLoop::create(this->loops->at(i));
+            continue;
+        }
+        
+        //Check if it overlaps with the current range
+        if (currentRange->overlaps(this->loops->at(i)))
+        {
+            currentRange->addLoop(this->loops->at(i));
+        } else {
+            //Add the range
+            ranges->push_back(currentRange);
+            
+            //Create a new range
+            currentRange = VideoLoop::create(this->loops->at(i));
+        }
+        
+        //Check if there are more loops to consider
+        if (this->numLoops() - i == 1)
+        {
+            ranges->push_back(currentRange);
+        }
+    }
+    
+    //Sort the ranges so that they are continuous
+    //Bubble sort algorithm btw
+    for (int i=(int)ranges->size(); i>=0; i--)
+    {
+        for (int j=1; j<i; j++) //Start at 1 so we can swap backwards
+        {
+            //If previous is greater than current, swap them
+            if (ranges->at(j-1)->maxFrame > ranges->at(j)->maxFrame)
+            {
+                //Swap
+                VideoLoop* tempLoop = ranges->at(j-1);
+                ranges->at(j-1) = ranges->at(j);
+                ranges->at(j) = tempLoop;
+            }
+        }
+    }
+    
+    return ranges;
+    
+}
+
+
 
 

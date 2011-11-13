@@ -42,7 +42,10 @@ public:
     void printLoops();
     double totalCost();
     
-    
+    int getMaxima();    //Get the loop with the last frame
+    Transition* popMaxima();    //Pop the maxima out of the list
+    vector<VideoLoop*>* getRanges();    //Get ranges from a video loop
+    Transition* popFirst();
     
 };
 
